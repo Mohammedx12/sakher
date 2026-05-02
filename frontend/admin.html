@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>لوحة الإدارة — صخر</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wood:#6B4423;--wood-dark:#5A3819;--cream:#F2EDE2;--cream-soft:#EDE5D5;
+  --ink:#1F2A2E;--ink-soft:#2C3640;--tan:#C8A57E;--line:rgba(31,42,46,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;font-size:14px;line-height:1.6}
+h1,h2,h3{font-family:'El Messiri',serif;font-weight:600}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
+.header h1{font-size:26px;color:var(--wood)}
+.header-meta{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:10px 18px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer;border:none;font-size:13px;transition:all .2s}
+.btn-primary{background:var(--wood);color:var(--cream)}
+.btn-primary:hover{background:var(--wood-dark)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--wood);color:var(--wood)}
+.login{max-width:380px;margin:80px auto;background:#fff;padding:32px;border-radius:14px;box-shadow:0 12px 32px rgba(31,42,46,.10)}
+.login h2{font-size:22px;margin-bottom:8px;color:var(--wood)}
+.login p{color:var(--ink-soft);margin-bottom:20px;font-size:13px}
+input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;margin-bottom:12px}
+input:focus{outline:none;border-color:var(--wood);box-shadow:0 0 0 3px rgba(107,68,35,.12)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat{background:#fff;padding:18px;border-radius:12px;border:1px solid var(--line)}
+.stat-label{font-size:12px;color:var(--ink-soft);margin-bottom:4px}
+.stat-num{font-family:'El Messiri',serif;font-size:30px;font-weight:700;color:var(--wood)}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.toolbar select{padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;font:inherit;font-size:13px}
+.table-wrap{background:#fff;border-radius:12px;overflow:auto;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:12px 14px;text-align:right;font-size:13px;border-bottom:1px solid var(--line)}
+th{background:var(--ink);color:var(--cream);font-weight:600;font-size:12px;letter-spacing:.05em;position:sticky;top:0}
+tbody tr:hover{background:var(--cream-soft)}
+.badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600}
+.badge-new{background:rgba(123,147,150,.2);color:#3a5b5e}
+.badge-contacted{background:rgba(184,146,74,.2);color:var(--wood)}
+.badge-closed{background:rgba(46,125,50,.15);color:#2e7d32}
+.badge-lost{background:rgba(192,57,43,.15);color:#c0392b}
+.empty{text-align:center;padding:60px 20px;color:var(--ink-soft)}
+.error{background:rgba(192,57,43,.1);color:#c0392b;padding:12px;border-radius:8px;margin-bottom:14px;font-size:13px}
+@media(max-width:780px){.stats{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+
+<div id="loginView" class="login">
+  <h2>لوحة الإدارة</h2>
+  <p>أدخل رمز الإدارة للوصول للبيانات</p>
+  <input type="password" id="tokenInput" placeholder="رمز الإدارة" autocomplete="off">
+  <div id="loginError" class="error" style="display:none"></div>
+  <button class="btn btn-primary" id="loginBtn" style="width:100%">دخول</button>
+</div>
+
+<div id="dashboardView" style="display:none">
+  <div class="wrap">
+    <div class="header">
+      <h1>صخر — لوحة الإدارة</h1>
+      <div class="header-meta">
+        <button class="btn btn-ghost" id="refreshBtn">تحديث</button>
+        <button class="btn btn-ghost" id="logoutBtn">خروج</button>
+      </div>
+    </div>
+
+    <div class="stats" id="statsBox"></div>
+
+    <div class="toolbar">
+      <strong>تصفية بالحالة:</strong>
+      <select id="statusFilter">
+        <option value="">الكل</option>
+        <option value="new">جديد</option>
+        <option value="contacted">تم التواصل</option>
+        <option value="closed">مغلق</option>
+        <option value="lost">مفقود</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>التاريخ</th><th>الاسم</th><th>الجوال</th>
+            <th>الشركة</th><th>الخدمة</th><th>الباقة</th><th>الأشخاص</th>
+            <th>الحالة</th><th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="leadsBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+  ? 'http://localhost:3001/api' : '/api';
+
+const $ = (id) => document.getElementById(id);
+const fmtDate = (s) => new Date(s.replace(' ', 'T') + 'Z').toLocaleString('ar-SA', {dateStyle:'short', timeStyle:'short'});
+
+const SERVICE_LABEL = { catering:'تموين', coffee_break:'قهوة استراحة', both:'الاثنان' };
+const TIER_LABEL = { bronze:'برونزية', silver:'فضية', gold:'ذهبية' };
+
+let token = sessionStorage.getItem('sakher_admin_token') || '';
+
+const showLogin = () => { $('loginView').style.display='block'; $('dashboardView').style.display='none'; };
+const showDash = () => { $('loginView').style.display='none'; $('dashboardView').style.display='block'; loadAll(); };
+
+async function api(path) {
+  const res = await fetch(API + path, { headers: { 'X-Admin-Token': token } });
+  if (res.status === 401) { token=''; sessionStorage.removeItem('sakher_admin_token'); showLogin(); throw new Error('unauthorized'); }
+  return res.json();
+}
+
+async function patchLead(id, status) {
+  await fetch(`${API}/admin/leads/${id}`, {
+    method:'PATCH',
+    headers:{'Content-Type':'application/json','X-Admin-Token':token},
+    body: JSON.stringify({ status })
+  });
+  loadAll();
+}
+
+async function loadStats() {
+  const s = await api('/admin/stats');
+  const newCount = (s.byStatus.find(r=>r.status==='new')||{}).c || 0;
+  $('statsBox').innerHTML = `
+    <div class="stat"><div class="stat-label">إجمالي الطلبات</div><div class="stat-num">${s.total}</div></div>
+    <div class="stat"><div class="stat-label">آخر 7 أيام</div><div class="stat-num">${s.last7}</div></div>
+    <div class="stat"><div class="stat-label">جديد بانتظار التواصل</div><div class="stat-num">${newCount}</div></div>
+    <div class="stat"><div class="stat-label">قهوة استراحة</div><div class="stat-num">${(s.byService.find(r=>r.service==='coffee_break')||{}).c||0}</div></div>
+  `;
+}
+
+async function loadLeads() {
+  const status = $('statusFilter').value;
+  const data = await api('/admin/leads' + (status ? `?status=${status}` : ''));
+  const body = $('leadsBody');
+  if (!data.leads.length) { body.innerHTML = `<tr><td colspan="10" class="empty">لا توجد طلبات</td></tr>`; return; }
+  body.innerHTML = data.leads.map(l => `
+    <tr>
+      <td>${l.id}</td>
+      <td>${fmtDate(l.created_at)}</td>
+      <td><strong>${escapeHtml(l.name)}</strong>${l.email ? `<br><small style="color:#888">${escapeHtml(l.email)}</small>` : ''}</td>
+      <td><a href="tel:${l.phone}" style="color:var(--wood)">${escapeHtml(l.phone)}</a><br><a href="https://wa.me/${l.phone.replace(/\\D/g,'')}" target="_blank" style="color:#25D366;font-size:11px">واتساب</a></td>
+      <td>${escapeHtml(l.company || '—')}</td>
+      <td>${SERVICE_LABEL[l.service] || l.service}</td>
+      <td>${TIER_LABEL[l.tier] || '—'}</td>
+      <td>${l.people || '—'}</td>
+      <td><span class="badge badge-${l.status}">${statusLabel(l.status)}</span></td>
+      <td>
+        <select onchange="patchLead(${l.id}, this.value)" style="padding:4px 8px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:12px">
+          <option value="">تغيير...</option>
+          <option value="new">جديد</option>
+          <option value="contacted">تم التواصل</option>
+          <option value="closed">مغلق</option>
+          <option value="lost">مفقود</option>
+        </select>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function statusLabel(s) {
+  return { new:'جديد', contacted:'تم التواصل', closed:'مغلق', lost:'مفقود' }[s] || s;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function loadAll() {
+  try { await loadStats(); await loadLeads(); }
+  catch(e) { /* handled in api() */ }
+}
+
+$('loginBtn').addEventListener('click', async () => {
+  token = $('tokenInput').value.trim();
+  if (!token) return;
+  try {
+    const r = await fetch(API + '/admin/stats', { headers: { 'X-Admin-Token': token } });
+    if (!r.ok) throw new Error('bad token');
+    sessionStorage.setItem('sakher_admin_token', token);
+    showDash();
+  } catch {
+    $('loginError').style.display='block';
+    $('loginError').textContent = 'رمز غير صحيح';
+  }
+});
+$('tokenInput').addEventListener('keydown', e => { if (e.key==='Enter') $('loginBtn').click(); });
+$('logoutBtn').addEventListener('click', () => { token=''; sessionStorage.removeItem('sakher_admin_token'); showLogin(); });
+$('refreshBtn').addEventListener('click', loadAll);
+$('statusFilter').addEventListener('change', loadLeads);
+
+if (token) showDash(); else showLogin();
+</script>
+</body>
+</html>
