@@ -793,7 +793,7 @@ section[hidden]{display:none !important}
         </div>
         <div class="hero-stats">
           <div>
-            <div class="stat-num">+400</div>
+            <div class="stat-num">+400 ألف</div>
             <div class="stat-label">منتج متاح</div>
           </div>
           <div>
@@ -879,7 +879,7 @@ section[hidden]{display:none !important}
           <h3>خدمات التموين</h3>
           <p>تموين احتياجات المكاتب والشركات بشكل دوري — أغذية، أدوات نظافة، ومستلزمات مكتبية. فريقنا يحسب معدلات استهلاك منشأتك للتأكد من توفير المنتجات حسب الاحتياج الفعلي.</p>
           <ul class="service-features">
-            <li>+400 منتج متاح للاختيار</li>
+            <li>+400 ألف منتج متاح للاختيار</li>
             <li>أسعار أقل من متوسط السوق بـ 25%</li>
             <li>إدارة الطلبات تلقائياً</li>
             <li>توصيل دوري ومنتظم</li>
@@ -1341,11 +1341,14 @@ document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 // Animate stats
 const stats = document.querySelectorAll('.stat-num');
 const animateStats = (el) => {
-  const text = el.textContent;
-  const num = parseInt(text.replace(/\D/g,''));
-  if(!num) return;
-  const prefix = text.match(/^[+\-]?/)?.[0] || '';
-  const suffix = text.match(/[%hKMB]+$/)?.[0] || '';
+  const text = el.textContent.trim();
+  // Capture: optional +/-, digits, then any trailing text (incl. Arabic) as suffix
+  const m = text.match(/^([+\-]?)(\d+)(.*)$/);
+  if (!m) return;
+  const prefix = m[1] || '';
+  const num    = parseInt(m[2], 10);
+  const suffix = m[3] || '';
+  if (!num) return;
   let current = 0;
   const step = Math.max(1, Math.floor(num / 40));
   const tick = () => {
