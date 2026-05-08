@@ -669,6 +669,9 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .8s,transform .8s}
 .reveal.in{opacity:1;transform:none}
 
+/* Hidden hospitality tiers — revealed when user clicks "الضيافة" */
+section[hidden]{display:none !important}
+
 /* ============== Lead Modal ============== */
 .modal-overlay{
   position:fixed;inset:0;z-index:200;
@@ -718,6 +721,14 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 .form-success.show{display:block}
 .btn-submit{width:100%;justify-content:center;padding:14px;font-size:15px}
 .btn-submit:disabled{opacity:.6;cursor:not-allowed}
+/* Catering-only mode: hide hospitality-specific fields */
+.modal-overlay.catering-only #leadTier,
+.modal-overlay.catering-only #leadPeople,
+.modal-overlay.catering-only label[for="leadTier"],
+.modal-overlay.catering-only label[for="leadPeople"],
+.modal-overlay.catering-only #leadTier ~ *,
+.modal-overlay.catering-only .field-tier,
+.modal-overlay.catering-only .field-people{display:none !important}
 @media (max-width:600px){
   .form-row{grid-template-columns:1fr}
   .modal{padding:28px 22px}
@@ -884,7 +895,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
           <span class="service-tag">المسار الثاني</span>
         </div>
         <div class="service-body">
-          <h3>قهوة الاستراحة</h3>
+          <h3>الضيافة</h3>
           <p>تجربة كوفي بريك مصممة بعناية لتمنح فريق العمل لحظات من الانتعاش والتركيز بين الاجتماعات — استراحة قصيرة تُجدد الطاقة وتُعزز الإنتاجية.</p>
           <ul class="service-features">
             <li>3 فئات: برونزية، فضية، ذهبية</li>
@@ -892,7 +903,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
             <li>قهوة، مشروبات ساخنة وباردة</li>
             <li>الحد الأدنى 30 شخص للباقة</li>
           </ul>
-          <a href="#tiers" class="service-cta">
+          <a href="#tiers" class="service-cta" id="showTiersCta">
             اعرض الباقات
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg>
           </a>
@@ -913,10 +924,10 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
     <div class="why-grid">
       <div class="why-card reveal">
         <div class="why-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
-        <h4>توفير الوقت</h4>
-        <p>نساعد موظفيكم على توفير المال والوقت الضائع في الحصول على الاحتياجات والاغذية.</p>
+        <h4>تخفيف الأعباء المالية</h4>
+        <p>تقليل التكاليف ومسؤولية أخطاء الخدمة المتعلقة بالتوظيف الفردي، والتعامل مع مختصين في التموين والضيافة بأفضل الأسعار.</p>
       </div>
       <div class="why-card reveal">
         <div class="why-icon">
@@ -927,10 +938,10 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
       </div>
       <div class="why-card reveal">
         <div class="why-icon">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2"/></svg>
         </div>
-        <h4>تخفيف الأعباء</h4>
-        <p>نقل مسؤولية الضيافة والتموين لمختصين، بأفضل الأسعار وتقليل أخطاء الخدمة.</p>
+        <h4>توفير الوقت</h4>
+        <p>نساعد موظفيكم على توفير الوقت الضائع في تأمين الاحتياجات اليومية للمنشأة، ليتركّزوا على عملهم الأساسي.</p>
       </div>
       <div class="why-card reveal">
         <div class="why-icon">
@@ -943,8 +954,8 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
   </div>
 </section>
 
-<!-- ============== Coffee Break Tiers ============== -->
-<section class="tiers" id="tiers">
+<!-- ============== Coffee Break Tiers (hidden by default; revealed via "الضيافة") ============== -->
+<section class="tiers" id="tiers" hidden>
   <div class="container">
     <div class="tiers-head reveal">
       <span class="section-eyebrow">قهوة الاستراحة</span>
@@ -1087,7 +1098,11 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
       <div class="step reveal">
         <div class="step-num">1</div>
         <h4>تواصل معنا</h4>
-        <p>أرسل احتياجك عبر الواتساب أو اتصل، ونحدد موعداً لمناقشة متطلبات منشأتك.</p>
+        <p>
+          <a href="#" data-quote-catering style="color:var(--wood);font-weight:600;text-decoration:underline;text-decoration-color:rgba(107,68,35,.4);text-underline-offset:3px">أرسل احتياجاتك من المنتجات هنا</a>،
+          أو عبر <a href="https://wa.me/966535563801" style="color:#25D366;font-weight:600">الواتساب</a> بشكل سريع ومباشر،
+          أو اتصل لتحديد موعد لمناقشة متطلبات منشأتك.
+        </p>
       </div>
       <div class="step reveal">
         <div class="step-num">2</div>
@@ -1275,11 +1290,11 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
           <select id="leadService" name="service" required>
             <option value="">— اختر —</option>
             <option value="catering">تموين منتظم</option>
-            <option value="coffee_break">قهوة استراحة</option>
+            <option value="coffee_break">ضيافة (قهوة استراحة)</option>
             <option value="both">الاثنان معاً</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group field-tier">
           <label for="leadTier">الباقة (اختياري)</label>
           <select id="leadTier" name="tier">
             <option value="">— غير محدد —</option>
@@ -1289,13 +1304,14 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
           </select>
         </div>
       </div>
-      <div class="form-group">
+      <div class="form-group field-people">
         <label for="leadPeople">عدد الأشخاص (للقهوة)</label>
         <input type="number" id="leadPeople" name="people" min="30" placeholder="الحد الأدنى 30">
       </div>
       <div class="form-group">
-        <label for="leadNotes">ملاحظات إضافية</label>
-        <textarea id="leadNotes" name="notes" maxlength="500"></textarea>
+        <label for="leadNotes" id="leadNotesLabel">ملاحظات إضافية</label>
+        <textarea id="leadNotes" name="notes" maxlength="800" rows="5"
+          placeholder="يوجد لدينا أكثر من 400 ألف منتج — اذكر لنا احتياجات منشأتك وسنقوم بإرسال عرض سعر مباشر."></textarea>
       </div>
       <div class="form-error" id="leadError" role="alert" aria-live="polite"></div>
       <button type="submit" class="btn btn-primary btn-submit" id="leadSubmit">
@@ -1349,6 +1365,28 @@ stats.forEach(s=>statObserver.observe(s));
 
 // Smooth scroll already enabled via CSS scroll-behavior
 
+// ============== Reveal Hospitality Tiers ==============
+// Tiers section starts with [hidden]. Any link to #tiers reveals it.
+const tiersSection = document.getElementById('tiers');
+const revealTiers = () => {
+  if (!tiersSection) return;
+  tiersSection.removeAttribute('hidden');
+  // Re-trigger reveal animation on its children so they fade in
+  tiersSection.querySelectorAll('.reveal').forEach(el => el.classList.remove('in'));
+  setTimeout(() => {
+    tiersSection.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+    tiersSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+};
+document.querySelectorAll('a[href="#tiers"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    if (tiersSection?.hasAttribute('hidden')) {
+      e.preventDefault();
+      revealTiers();
+    }
+  });
+});
+
 // ============== Lead Modal ==============
 const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
   ? 'http://localhost:3001/api'
@@ -1364,6 +1402,21 @@ const leadSubmit = document.getElementById('leadSubmit');
 const openModal = (preset = {}) => {
   if (preset.tier) document.getElementById('leadTier').value = preset.tier;
   if (preset.service) document.getElementById('leadService').value = preset.service;
+
+  // Catering-only mode: hide tier & people fields, change title/sub
+  const cateringOnly = !!preset.cateringOnly;
+  modal.classList.toggle('catering-only', cateringOnly);
+  const title = document.getElementById('leadTitle');
+  const sub   = modal.querySelector('.modal-sub');
+  if (cateringOnly) {
+    if (title) title.textContent = 'احصل على عرض تموين مخصص';
+    if (sub)   sub.textContent   = 'اكتب احتياجات منشأتك من المنتجات وسنرسل لك عرض سعر مباشر.';
+    document.getElementById('leadService').value = 'catering';
+  } else {
+    if (title) title.textContent = 'اطلب عرض ضيافة مخصص';
+    if (sub)   sub.textContent   = 'عبّي البيانات وبيتواصل معك أحد ممثلينا خلال ساعات العمل.';
+  }
+
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   setTimeout(() => document.getElementById('leadName').focus(), 100);
@@ -1409,10 +1462,24 @@ document.querySelectorAll('a.btn.btn-primary').forEach(el => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       let service = '';
+      let cateringOnly = false;
       if (txt.includes('التموين')) service = 'catering';
-      openModal({ service });
+      // "احصل على عرض" comes from the catering pricing block → catering-only mode
+      if (txt.startsWith('احصل على عرض') || txt.includes('احتياجاتك من المنتجات')) {
+        service = 'catering';
+        cateringOnly = true;
+      }
+      openModal({ service, cateringOnly });
     });
   }
+});
+
+// Wire any element with [data-quote-catering] to open catering-only modal
+document.querySelectorAll('[data-quote-catering]').forEach(el => {
+  el.addEventListener('click', (e) => {
+    e.preventDefault();
+    openModal({ service: 'catering', cateringOnly: true });
+  });
 });
 
 leadForm.addEventListener('submit', async (e) => {
