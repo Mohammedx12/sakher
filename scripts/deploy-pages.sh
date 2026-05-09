@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-# Sync frontend/index.html (+ admin.html) from `main` to `gh-pages` branch
-# at the repo root, then push. Run this whenever you've made frontend
-# changes on `main` and want to update the live GitHub Pages site.
+# Sync frontend/* from `main` to `gh-pages` branch (at root), then push.
+# Includes index.html, admin.html, and the img/ folder.
 #
 # Usage:
 #   ./scripts/deploy-pages.sh
 #
 set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
 
 # Make sure we have a clean working tree on main
 git checkout main
@@ -15,24 +17,30 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
   exit 1
 fi
 
-# Capture the source files from main
-SRC_INDEX=$(git show main:frontend/index.html)
-SRC_ADMIN=$(git show main:frontend/admin.html)
+# Stage the frontend files we want to deploy into a temp dir
+STAGE="$(mktemp -d)"
+trap 'rm -rf "$STAGE"' EXIT
+cp frontend/index.html "$STAGE/"
+cp frontend/admin.html "$STAGE/"
+if [ -d frontend/img ]; then
+  cp -R frontend/img "$STAGE/img"
+fi
 
 # Switch to gh-pages
 git checkout gh-pages
 
-# Write files at root, NOT under frontend/
-printf '%s' "$SRC_INDEX" > index.html
-printf '%s' "$SRC_ADMIN" > admin.html
+# Wipe everything currently tracked except .git
+git ls-files | grep -v '^\.git/' | xargs -r rm -f
+# Also remove any stale frontend/ folder still around
+[ -d frontend ] && rm -rf frontend
 
-# Stage only the root-level html files
-git add index.html admin.html
+# Copy staged files to repo root
+cp "$STAGE/index.html" .
+cp "$STAGE/admin.html" .
+[ -d "$STAGE/img" ] && cp -R "$STAGE/img" ./img
 
-# Make sure no stray frontend/ folder is tracked
-if git ls-files --error-unmatch frontend/index.html >/dev/null 2>&1; then
-  git rm -rf frontend
-fi
+# Stage everything (index.html, admin.html, img/*)
+git add -A
 
 # Commit + push (skip if nothing changed)
 if git diff --cached --quiet; then
