@@ -200,16 +200,13 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 .stat-num{font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--wood);line-height:1}
 .stat-label{font-size:13px;color:var(--ink-soft);margin-top:4px}
 
-/* ===== Hero — logo composition (7 stones) over main.jpeg backdrop =====
-   At rest:    you see the brand logo (7 colored shapes)
-   On hover:   4 "photo" stones fade out, revealing main.jpeg behind them.
-               The 3 decorative stones (tan stripe + sage blobs) stay solid. */
+/* ===== Hero — logo by default, swaps to main photo on hover ===== */
 .hero-visual{
   position:relative;
   display:flex;align-items:center;justify-content:center;
   min-height:520px;
 }
-.logo-art{
+.hero-swap{
   position:relative;
   width:100%;
   max-width:480px;
@@ -217,78 +214,36 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
   cursor:pointer;
   user-select:none;
 }
-
-/* The photo backdrop — behind everything, always rendered */
-.logo-art-photo{
+.hero-img{
   position:absolute;inset:0;
-  background:url('img/main.jpeg') center/cover no-repeat;
-  border-radius:24px;
-  box-shadow:0 14px 40px rgba(31,42,46,.14);
-  z-index:0;
+  width:100%;height:100%;
+  object-fit:contain;
+  transition:opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1);
 }
-
-/* All shapes sit above the photo */
-.lp{
-  position:absolute;
+.hero-img-logo{
+  z-index:2;
+  opacity:1;
+  animation:logoFloat 9s ease-in-out infinite;
+}
+.hero-img-photo{
   z-index:1;
-  box-shadow:0 8px 22px rgba(31,42,46,.10);
-  transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .55s ease;
-  will-change:transform, opacity;
+  opacity:0;
+  object-fit:cover;
+  border-radius:24px;
+  box-shadow:0 18px 44px rgba(31,42,46,.18);
 }
-
-/* Only the "photo stones" fade away on hover/focus → reveal main.jpeg */
-.logo-art:hover .lp-photo,
-.logo-art:focus-visible .lp-photo,
-.logo-art.is-revealed .lp-photo{opacity:0}
-
-/* Subtle scale on the still-visible decorative shapes */
-.logo-art:hover .lp,
-.logo-art.is-revealed .lp{transform:scale(1.015)}
-
-/* Individual stones — positions, organic shapes, brand colors */
-.lp-1{ /* top-left wood leaf */
-  top:2%;right:4%;width:42%;height:46%;
-  border-radius:62% 38% 50% 50% / 60% 50% 50% 40%;
-  background:var(--wood-light);
+.hero-swap:hover .hero-img-logo,
+.hero-swap:focus-visible .hero-img-logo,
+.hero-swap.is-revealed .hero-img-logo{
+  opacity:0;
+  animation-play-state:paused;
 }
-.lp-2{ /* top-right ink */
-  top:0;left:6%;width:46%;height:54%;
-  border-radius:48% 52% 42% 50% / 55% 50% 50% 45%;
-  background:var(--ink);
+.hero-swap:hover .hero-img-photo,
+.hero-swap:focus-visible .hero-img-photo,
+.hero-swap.is-revealed .hero-img-photo{
+  opacity:1;
+  transform:scale(1.02);
 }
-.lp-3{ /* mid tan stripe — decorative */
-  top:46%;right:18%;width:30%;height:9%;
-  border-radius:50%;
-  background:var(--tan);
-}
-.lp-4{ /* mid-center sage blob — decorative */
-  top:40%;left:36%;width:18%;height:11%;
-  border-radius:55% 45% 50% 50% / 60% 55% 45% 40%;
-  background:var(--sage);
-}
-.lp-5{ /* mid-left stone */
-  top:48%;left:0;width:48%;height:34%;
-  border-radius:55% 45% 60% 40% / 50% 60% 40% 50%;
-  background:var(--stone);
-}
-.lp-6{ /* bottom ink */
-  bottom:0;right:0;width:38%;height:28%;
-  border-radius:60% 40% 30% 70% / 70% 50% 50% 30%;
-  background:var(--ink-soft);
-}
-.lp-7{ /* bottom corner sage — decorative */
-  bottom:4%;left:8%;width:22%;height:16%;
-  border-radius:50% 50% 60% 40% / 60% 40% 60% 40%;
-  background:var(--sage);
-}
-
-/* Gentle ambient float (paused on hover) */
-.logo-art .lp{animation:logoFloat 9s ease-in-out infinite}
-.logo-art .lp-2{animation-delay:-2s;animation-duration:11s}
-.logo-art .lp-5{animation-delay:-4s;animation-duration:10s}
-.logo-art .lp-6{animation-delay:-1s;animation-duration:12s}
-.logo-art:hover .lp,
-.logo-art.is-revealed .lp{animation-play-state:paused}
 
 @keyframes logoFloat{
   0%,100%{transform:translateY(0)}
@@ -647,7 +602,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
-  .trust-track,.partner-track,.lp{animation:none !important}
+  .trust-track,.partner-track,.hero-img-logo{animation:none !important}
   .reveal{transition:none}
   *{scroll-behavior:auto}
 }
@@ -798,16 +753,10 @@ section[hidden]{display:none !important}
         </div>
       </div>
       <div class="hero-visual reveal">
-        <div class="logo-art" id="logoArt" role="button" tabindex="0"
-             aria-label="شعار صخر — مرّر فوقه لاكتشاف صورتنا">
-          <div class="logo-art-photo" aria-hidden="true"></div>
-          <div class="lp lp-2 lp-photo" aria-hidden="true"></div>
-          <div class="lp lp-1 lp-photo" aria-hidden="true"></div>
-          <div class="lp lp-5 lp-photo" aria-hidden="true"></div>
-          <div class="lp lp-6 lp-photo" aria-hidden="true"></div>
-          <div class="lp lp-3" aria-hidden="true"></div>
-          <div class="lp lp-4" aria-hidden="true"></div>
-          <div class="lp lp-7" aria-hidden="true"></div>
+        <div class="hero-swap" id="logoArt" role="button" tabindex="0"
+             aria-label="شعار صخر — مرّر فوقه لرؤية صورتنا">
+          <img class="hero-img hero-img-logo" src="img/logo.png" alt="شعار صخر">
+          <img class="hero-img hero-img-photo" src="img/main.png" alt="صخر للضيافة" aria-hidden="true">
         </div>
       </div>
     </div>
