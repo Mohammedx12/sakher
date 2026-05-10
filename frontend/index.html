@@ -122,18 +122,18 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 .header-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:var(--container);margin:0 auto}
 .logo{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--ink)}
 .logo-mark{
-  width:42px;height:42px;border-radius:50%;
-  background:var(--ink);
-  display:grid;place-items:center;
-  position:relative;
+  width:46px;height:54px;
+  background:url('img/logo.png') no-repeat center / contain;
+  flex-shrink:0;
 }
-.logo-mark::before{
-  content:"";position:absolute;inset:8px;
-  background:
-    radial-gradient(circle at 30% 30%, var(--wood-light) 0 8px, transparent 9px),
-    radial-gradient(circle at 70% 35%, var(--cream-soft) 0 7px, transparent 8px),
-    radial-gradient(circle at 35% 70%, var(--sage) 0 6px, transparent 7px),
-    radial-gradient(circle at 65% 70%, var(--tan) 0 5px, transparent 6px);
+/* Footer is dark — give the logo a soft cream backdrop so the
+   dark navy shapes inside it stay visible. */
+.footer .logo-mark{
+  background-color:var(--cream);
+  border-radius:8px;
+  padding:4px;
+  background-position:center;
+  background-size:80%;
 }
 .logo-text{display:flex;flex-direction:column;line-height:1.1}
 .logo-text small{font-size:11px;color:var(--wood);font-weight:500;letter-spacing:.04em}
@@ -1393,9 +1393,8 @@ document.querySelectorAll('a[href="#tiers"]').forEach(a => {
 });
 
 // ============== Lead Modal ==============
-const API_BASE = (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
-  ? 'http://localhost:3001/api'
-  : '/api';
+// Submit endpoint = Supabase Edge Function (public; service_role stays on server)
+const API_LEAD_URL = 'https://prynyljkrunuszjxsmna.supabase.co/functions/v1/submit-lead';
 
 const modal = document.getElementById('leadModal');
 const modalClose = document.getElementById('leadClose');
@@ -1500,12 +1499,15 @@ leadForm.addEventListener('submit', async (e) => {
   leadSubmit.querySelector('span').textContent = 'جاري الإرسال...';
 
   try {
-    const res = await fetch(API_BASE + '/leads', {
+    const res = await fetch(API_LEAD_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    if (!res.ok) throw new Error('server');
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'server');
+    }
     leadSuccess.classList.add('show');
     leadForm.reset();
     setTimeout(() => { closeModal(); leadSuccess.classList.remove('show'); }, 2500);
