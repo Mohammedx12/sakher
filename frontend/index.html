@@ -200,114 +200,42 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 .stat-num{font-family:var(--font-display);font-size:36px;font-weight:700;color:var(--wood);line-height:1}
 .stat-label{font-size:13px;color:var(--ink-soft);margin-top:4px}
 
-/* ===== Hero visual — interactive brand logo composition =====
-   At rest:  shows the Sakher logo mark made of brand-color shapes
-   On hover: shapes with photos fade their solid overlay → reveal product imagery */
+/* ===== Hero visual — single brand image with subtle hover effect ===== */
 .hero-visual{
   position:relative;
   display:flex;align-items:center;justify-content:center;
   min-height:520px;
 }
-.logo-art{
+.hero-main{
   position:relative;
   width:100%;
-  max-width:480px;
-  aspect-ratio: 1 / 1.05;
-  cursor:pointer;
-  user-select:none;
-}
-.logo-art .reveal-hint{
-  position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);
-  font-size:13px;color:var(--wood);font-weight:600;
-  letter-spacing:.04em;
-  display:inline-flex;align-items:center;gap:6px;
-  opacity:.85;transition:opacity .3s, transform .3s;
-  white-space:nowrap;
-}
-.logo-art:hover .reveal-hint,
-.logo-art.is-revealed .reveal-hint{opacity:0;transform:translate(-50%, -6px)}
-.logo-art .reveal-hint svg{width:14px;height:14px}
-
-.lp{
-  position:absolute;
-  background-size:cover;background-position:center;
-  box-shadow:0 10px 28px rgba(31,42,46,.10);
-  transition:transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
+  max-width:520px;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 20px 50px rgba(31,42,46,.18);
+  transition:transform .6s cubic-bezier(.2,.8,.2,1), box-shadow .5s;
   will-change:transform;
+  animation:heroFloat 9s ease-in-out infinite;
 }
-.lp::before{
-  content:"";position:absolute;inset:0;
-  border-radius:inherit;
-  transition:opacity .55s ease;
+.hero-main img{
+  display:block;
+  width:100%;
+  height:auto;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1), filter .5s;
 }
-.logo-art:hover .lp,
-.logo-art.is-revealed .lp{transform:scale(1.015)}
-.logo-art:hover .lp::before,
-.logo-art.is-revealed .lp::before{opacity:0}
-
-/* ──────────────────────────────────────────────────────────
-   LOGO SHAPES — to swap an image, change --logo-photo-X above.
-   To change the resting color of a shape, edit its ::before bg.
-   To reshape, change border-radius. To reposition, change top/
-   right/bottom/left + width/height.
-   ────────────────────────────────────────────────────────── */
-.lp-1{ /* top-left: wood leaf — PHOTO 1 */
-  top:2%;right:4%;width:42%;height:46%;
-  border-radius:62% 38% 50% 50% / 60% 50% 50% 40%;
-  background-image:var(--logo-photo-1);
+.hero-main:hover{
+  transform:translateY(-4px);
+  box-shadow:0 28px 64px rgba(31,42,46,.24);
+  animation-play-state:paused;
 }
-.lp-1::before{background:var(--wood-light)}
-
-.lp-2{ /* top-right: ink rounded — PHOTO 2 */
-  top:0;left:6%;width:46%;height:54%;
-  border-radius:48% 52% 42% 50% / 55% 50% 50% 45%;
-  background-image:var(--logo-photo-2);
+.hero-main:hover img{
+  transform:scale(1.04);
+  filter:saturate(1.08) brightness(1.02);
 }
-.lp-2::before{background:var(--ink)}
 
-.lp-3{ /* mid tan stripe (no photo) */
-  top:46%;right:18%;width:30%;height:9%;
-  border-radius:50%;
-}
-.lp-3::before{background:var(--tan)}
-
-.lp-4{ /* mid-center sage blob (no photo) */
-  top:40%;left:36%;width:18%;height:11%;
-  border-radius:55% 45% 50% 50% / 60% 55% 45% 40%;
-}
-.lp-4::before{background:var(--sage)}
-
-.lp-5{ /* mid-left stone — PHOTO 3 */
-  top:48%;left:0;width:48%;height:34%;
-  border-radius:55% 45% 60% 40% / 50% 60% 40% 50%;
-  background-image:var(--logo-photo-3);
-}
-.lp-5::before{background:var(--stone)}
-
-.lp-6{ /* bottom ink — PHOTO 4 */
-  bottom:0;right:0;width:38%;height:28%;
-  border-radius:60% 40% 30% 70% / 70% 50% 50% 30%;
-  background-image:var(--logo-photo-4);
-}
-.lp-6::before{background:var(--ink-soft)}
-
-.lp-7{ /* bottom corner sage (no photo) */
-  bottom:4%;left:8%;width:22%;height:16%;
-  border-radius:50% 50% 60% 40% / 60% 40% 60% 40%;
-}
-.lp-7::before{background:var(--sage)}
-
-/* gentle ambient float (paused on hover so reveal feels intentional) */
-.logo-art .lp{animation:logoFloat 9s ease-in-out infinite}
-.logo-art .lp-2{animation-delay:-2s;animation-duration:11s}
-.logo-art .lp-5{animation-delay:-4s;animation-duration:10s}
-.logo-art .lp-6{animation-delay:-1s;animation-duration:12s}
-.logo-art:hover .lp,
-.logo-art.is-revealed .lp{animation-play-state:paused}
-
-@keyframes logoFloat{
+@keyframes heroFloat{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+  50%{transform:translateY(-8px)}
 }
 /* ============== Trust Bar (marquee) ============== */
 .trust-bar{
@@ -662,7 +590,7 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce){
-  .trust-track,.partner-track,.lp{animation:none !important}
+  .trust-track,.partner-track,.hero-main{animation:none !important}
   .reveal{transition:none}
   *{scroll-behavior:auto}
 }
@@ -813,19 +741,8 @@ section[hidden]{display:none !important}
         </div>
       </div>
       <div class="hero-visual reveal">
-        <div class="logo-art" id="logoArt" role="button" tabindex="0"
-             aria-label="شعار صخر — مرّر فوقه لاكتشاف منتجاتنا">
-          <div class="lp lp-2" aria-hidden="true"></div>
-          <div class="lp lp-1" aria-hidden="true"></div>
-          <div class="lp lp-5" aria-hidden="true"></div>
-          <div class="lp lp-6" aria-hidden="true"></div>
-          <div class="lp lp-3" aria-hidden="true"></div>
-          <div class="lp lp-4" aria-hidden="true"></div>
-          <div class="lp lp-7" aria-hidden="true"></div>
-          <span class="reveal-hint" aria-hidden="true">
-            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-            مرّر لاكتشاف منتجاتنا
-          </span>
+        <div class="hero-main">
+          <img src="img/main.jpeg" alt="صخر للضيافة والتموين" loading="eager" decoding="async">
         </div>
       </div>
     </div>
@@ -1540,21 +1457,6 @@ const spy = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '-40% 0px -55% 0px' });
 sections.forEach(s => spy.observe(s));
-
-// Logo art — click/tap toggles reveal (for touch devices that have no hover)
-const logoArt = document.getElementById('logoArt');
-if (logoArt) {
-  const toggleReveal = () => logoArt.classList.toggle('is-revealed');
-  logoArt.addEventListener('click', toggleReveal);
-  logoArt.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleReveal(); }
-  });
-  // Auto-cycle on touch devices so users discover the interaction
-  if (matchMedia('(hover: none)').matches) {
-    let on = false;
-    setInterval(() => { on = !on; logoArt.classList.toggle('is-revealed', on); }, 3500);
-  }
-}
 
 // Focus management — return focus to opener after modal closes
 let lastTrigger = null;
