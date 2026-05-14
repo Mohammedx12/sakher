@@ -219,6 +219,8 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
   width:100%;height:100%;
   object-fit:contain;
   transition:opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1);
+  image-rendering:-webkit-optimize-contrast;
+  image-rendering:auto;
 }
 .hero-img-logo{
   z-index:2;
@@ -392,18 +394,39 @@ h1,h2,h3,h4{font-family:var(--font-display);line-height:1.25;color:var(--ink);fo
   background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01));
   border:1px solid rgba(255,255,255,.1);
   border-radius:var(--radius);
-  padding:36px 32px;
+  padding:0 0 32px;
   position:relative;
   transition:all .35s;
   display:flex;flex-direction:column;
+  overflow:hidden;
 }
 .tier:hover{transform:translateY(-8px);border-color:rgba(200,165,126,.4)}
+/* Tier hero image banner */
+.tier-img{
+  width:100%;
+  height:190px;
+  background-size:cover;
+  background-position:center;
+  position:relative;
+  overflow:hidden;
+  transition:transform .8s cubic-bezier(.2,.8,.2,1);
+}
+.tier-img::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(31,42,46,0) 40%, rgba(31,42,46,.45) 100%);
+}
+.tier:hover .tier-img{transform:scale(1.04)}
+.tier-bronze .tier-img{background-image:url('img/bronze.jpeg')}
+.tier-silver .tier-img{background-image:url('img/silver.jpeg')}
+.tier-gold .tier-img{background-image:url('img/gold.jpeg')}
+/* Body padding (since outer .tier no longer has horizontal padding) */
+.tier-body{padding:32px 32px 0;display:flex;flex-direction:column;flex:1}
 .tier-popular{
   background:linear-gradient(180deg,rgba(184,146,74,.12),rgba(184,146,74,.04));
   border-color:rgba(184,146,74,.4);
 }
 .tier-badge{
-  position:absolute;top:-12px;right:24px;
+  position:absolute;top:-12px;right:24px;z-index:2;
   background:var(--gold);color:var(--ink);
   padding:5px 14px;border-radius:6px;
   font-size:12px;font-weight:700;letter-spacing:.05em;
@@ -755,7 +778,7 @@ section[hidden]{display:none !important}
       <div class="hero-visual reveal">
         <div class="hero-swap" id="logoArt" role="button" tabindex="0"
              aria-label="شعار صخر — مرّر فوقه لرؤية صورتنا">
-          <img class="hero-img hero-img-logo" src="img/logo.png" alt="شعار صخر">
+          <img class="hero-img hero-img-logo" src="img/logo.svg" alt="شعار صخر">
           <img class="hero-img hero-img-photo" src="img/main.png" alt="صخر للضيافة" aria-hidden="true">
         </div>
       </div>
@@ -898,6 +921,8 @@ section[hidden]{display:none !important}
     <div class="tiers-grid">
       <!-- Bronze -->
       <div class="tier tier-bronze reveal">
+        <div class="tier-img" aria-hidden="true"></div>
+        <div class="tier-body">
         <div class="tier-name">FÆ بـرونـزيـة</div>
         <h3 class="tier-title">الفئة البرونزية</h3>
         <div class="tier-price"><span class="num">85</span><span class="unit">ريال / شخص</span></div>
@@ -911,10 +936,13 @@ section[hidden]{display:none !important}
           <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> قهوة أمريكانو، شاي متنوع، مياه</li>
         </ul>
         <a href="https://wa.me/966535563801" class="tier-cta">اطلب البرونزية</a>
+        </div>
       </div>
 
       <!-- Silver -->
       <div class="tier tier-silver reveal">
+        <div class="tier-img" aria-hidden="true"></div>
+        <div class="tier-body">
         <div class="tier-name">FÆ فــضـيــة</div>
         <h3 class="tier-title">الفئة الفضية</h3>
         <div class="tier-price"><span class="num">125</span><span class="unit">ريال / شخص</span></div>
@@ -928,11 +956,14 @@ section[hidden]{display:none !important}
           <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> مشروب سعودي شامبين + مياه زجاجية</li>
         </ul>
         <a href="https://wa.me/966535563801" class="tier-cta">اطلب الفضية</a>
+        </div>
       </div>
 
       <!-- Gold -->
       <div class="tier tier-gold tier-popular reveal">
         <div class="tier-badge">الأكثر طلباً</div>
+        <div class="tier-img" aria-hidden="true"></div>
+        <div class="tier-body">
         <div class="tier-name">FÆ ذهـبـيــة</div>
         <h3 class="tier-title">الفئة الذهبية</h3>
         <div class="tier-price"><span class="num">155</span><span class="unit">ريال / شخص</span></div>
@@ -946,6 +977,7 @@ section[hidden]{display:none !important}
           <li><svg fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> أعواد فواكه + عصير بطيخ + عصير تفاح وجزر</li>
         </ul>
         <a href="https://wa.me/966535563801" class="tier-cta">اطلب الذهبية</a>
+        </div>
       </div>
     </div>
   </div>
