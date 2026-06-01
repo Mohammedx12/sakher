@@ -37,6 +37,10 @@ cp frontend/admin.html "$WT/admin.html"
 if [ -d frontend/img ]; then
   cp -R frontend/img "$WT/img"
 fi
+# Custom domain (sakher.sa) — must exist at gh-pages root
+if [ -f frontend/CNAME ]; then
+  cp frontend/CNAME "$WT/CNAME"
+fi
 
 # Optional: drop a .nojekyll so Pages serves files literally
 touch "$WT/.nojekyll"
